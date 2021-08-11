@@ -12,4 +12,4 @@
 
 使用 `pip install --upgrade tencentcloud-sdk-python`指令安装依赖
 
-把文件夹放入modules中并在__bot__.py中添加该插件
+把文件夹放入`modules`中并在`__bot__.py`中添加该插件
