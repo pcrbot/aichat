@@ -84,6 +84,27 @@ async def disable_aichat(bot, ev: CQEvent):
     await bot.send(ev, f'人工智障已禁用')
 
 
+def aichat(text):
+    cred = credential.Credential(SecretId, SecretKey) 
+    httpProfile = HttpProfile()
+    httpProfile.endpoint = "nlp.tencentcloudapi.com"
+
+    clientProfile = ClientProfile()
+    clientProfile.httpProfile = httpProfile
+    client = nlp_client.NlpClient(cred, "ap-guangzhou", clientProfile) 
+
+    req = models.ChatBotRequest()
+    params = {
+        "Query": text,
+    }
+    req.from_json_string(json.dumps(params))
+
+    resp = client.ChatBot(req)
+    param = resp.to_json_string()
+    reply = json.loads(param)
+    msg = reply['Reply']
+    return msg
+
 @sv.on_message('group')
 async def ai_reply(bot, context):   
     msg = str(context['message'])
@@ -92,27 +113,8 @@ async def ai_reply(bot, context):
         if text == '':
             return
         try: 
-            cred = credential.Credential(SecretId, SecretKey) 
-            httpProfile = HttpProfile()
-            httpProfile.endpoint = "nlp.tencentcloudapi.com"
-
-            clientProfile = ClientProfile()
-            clientProfile.httpProfile = httpProfile
-            client = nlp_client.NlpClient(cred, "ap-guangzhou", clientProfile) 
-
-            req = models.ChatBotRequest()
-            params = {
-                "Query": text,
-            }
-            req.from_json_string(json.dumps(params))
-
-            resp = client.ChatBot(req)
-            param = resp.to_json_string()
-            reply = json.loads(param)
-            msg = reply['Reply']
+            msg = aichat(text)
             await bot.send(context, msg,at_sender=False) 
-                
-
         except TencentCloudSDKException as err: 
             print(err) 
         return
@@ -124,27 +126,8 @@ async def ai_reply(bot, context):
             if text == '':
                 return
             try: 
-                cred = credential.Credential(SecretId, SecretKey) 
-                httpProfile = HttpProfile()
-                httpProfile.endpoint = "nlp.tencentcloudapi.com"
-
-                clientProfile = ClientProfile()
-                clientProfile.httpProfile = httpProfile
-                client = nlp_client.NlpClient(cred, "ap-guangzhou", clientProfile) 
-
-                req = models.ChatBotRequest()
-                params = {
-                    "Query": text,
-                }
-                req.from_json_string(json.dumps(params))
-
-                resp = client.ChatBot(req)
-                param = resp.to_json_string()
-                reply = json.loads(param)
-                msg = reply['Reply']
+                msg = aichat(text)
                 await bot.send(context, msg,at_sender=False) 
-                
-
             except TencentCloudSDKException as err: 
                 print(err) 
     else:
