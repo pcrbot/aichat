@@ -25,6 +25,7 @@ from tencentcloud.nlp.v20190408 import nlp_client, models
 #from hoshino.service import Service, Privilege as Priv
 sv = Service('人工智障')
 
+black_word = ['色图','来一井','贵族签到'] #如果有不想触发的词可以填在这里
 
 SecretId = '' #  填你的SecretId
 SecretKey = ''#  填你的SecretKey
@@ -110,7 +111,7 @@ async def ai_reply(bot, context):
     msg = str(context['message'])
     if msg.startswith(f'[CQ:at,qq={context["self_id"]}]'):
         text = re.sub(cq_code_pattern, '', msg).strip()
-        if text == '':
+        if text == ''or text in black_word:
             return
         try: 
             msg = aichat(text)
@@ -123,7 +124,7 @@ async def ai_reply(bot, context):
             return
         else:           
             text = re.sub(cq_code_pattern, '', msg).strip()
-            if text == '':
+            if text == ''or text in black_word:
                 return
             try: 
                 msg = aichat(text)
